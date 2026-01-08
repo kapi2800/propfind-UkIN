@@ -105,8 +105,14 @@ SRO_BY_DISTRICT = {
 # ============================================
 # HEADER
 # ============================================
-st.title("PropFind Uttarakhand")
-st.caption("Advanced Property Search Engine | उत्तराखंड संपत्ति खोज")
+st.title("PropFind")
+st.caption("Property Search Engine | संपत्ति खोज इंजन")
+
+# Disclaimer
+st.warning("""
+**Disclaimer**: This tool is for **educational and research purposes only**. 
+No data is stored or collected. Not for commercial use.
+""")
 
 # ============================================
 # CLIPBOARD
@@ -148,25 +154,26 @@ with col1:
 with col2:
     district_id = st.selectbox(
         "District",
-        options=list(DISTRICTS.keys()),
-        format_func=lambda x: DISTRICTS[x],
-        index=11
+        options=[""] + list(DISTRICTS.keys()),
+        format_func=lambda x: "-- Select District --" if x == "" else DISTRICTS[x],
+        index=0
     )
 
 with col3:
-    sro_options = SRO_BY_DISTRICT.get(district_id, {"01": "HQ"})
+    sro_options = SRO_BY_DISTRICT.get(district_id, {}) if district_id else {}
     sro_id = st.selectbox(
         "SRO Office",
-        options=list(sro_options.keys()),
-        format_func=lambda x: sro_options[x],
-        index=min(2, len(sro_options) - 1)
+        options=[""] + list(sro_options.keys()) if sro_options else [""],
+        format_func=lambda x: "-- Select SRO --" if x == "" else sro_options.get(x, x),
+        index=0,
+        disabled=not district_id
     )
 
 with col4:
-    from_year = st.selectbox("From", options=list(range(2026, 2008, -1)), index=7)
+    from_year = st.selectbox("From", options=[""] + list(range(2026, 2008, -1)), format_func=lambda x: "Year" if x == "" else x, index=0)
 
 with col5:
-    to_year = st.selectbox("To", options=list(range(2026, 2008, -1)), index=7)
+    to_year = st.selectbox("To", options=[""] + list(range(2026, 2008, -1)), format_func=lambda x: "Year" if x == "" else x, index=0)
 
 with col6:
     search_btn = st.button(f"Search {search_type}s", type="primary", use_container_width=True)
@@ -188,11 +195,17 @@ if st.session_state.scraped_data:
 # ============================================
 # SEARCH EXECUTION
 # ============================================
-years_list = [str(y) for y in range(min(from_year, to_year), max(from_year, to_year) + 1)]
+years_list = []
+if from_year and to_year:
+    years_list = [str(y) for y in range(min(from_year, to_year), max(from_year, to_year) + 1)]
 
 if search_btn:
     if not name_input.strip():
         st.warning("Please enter a name to search")
+    elif not district_id or not sro_id:
+        st.warning("Please select District and SRO Office")
+    elif not from_year or not to_year:
+        st.warning("Please select year range")
     else:
         st.session_state.scraped_data = []
         
@@ -287,4 +300,4 @@ if st.session_state.scraped_data:
 # FOOTER
 # ============================================
 st.markdown("---")
-st.caption("PropFind v5.0 | Data from Uttarakhand e-Registration Portal")
+st.caption("PropFind | Educational & Non-Commercial Use Only | No data stored")
