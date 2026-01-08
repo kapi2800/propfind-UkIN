@@ -170,10 +170,11 @@ with col3:
     )
 
 with col4:
-    from_year = st.selectbox("From", options=[""] + list(range(2026, 2008, -1)), format_func=lambda x: "Year" if x == "" else x, index=0)
+    year_options = [None] + list(range(2026, 2008, -1))
+    from_year = st.selectbox("From", options=year_options, format_func=lambda x: "-- Year --" if x is None else str(x), index=0)
 
 with col5:
-    to_year = st.selectbox("To", options=[""] + list(range(2026, 2008, -1)), format_func=lambda x: "Year" if x == "" else x, index=0)
+    to_year = st.selectbox("To", options=year_options, format_func=lambda x: "-- Year --" if x is None else str(x), index=0)
 
 with col6:
     search_btn = st.button(f"Search {search_type}s", type="primary", use_container_width=True)
