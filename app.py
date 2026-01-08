@@ -138,13 +138,13 @@ st.divider()
 # Row 1: Search Type Toggle
 type_col, spacer = st.columns([2, 10])
 with type_col:
-    search_type = st.radio("Search By", ["Buyer", "Seller"], horizontal=True, label_visibility="collapsed")
+    search_type = st.radio("Search By", ["Buyer", "Seller"], horizontal=True, label_visibility="collapsed", key="search_type")
 
 # Row 2: Search Fields
 col1, col2, col3, col4, col5, col6 = st.columns([3.5, 2.5, 2.5, 1.5, 1.5, 2])
 
 with col1:
-    name_input = st.text_input(f"{search_type} Name", placeholder="Enter name in Hindi or English...")
+    name_input = st.text_input(f"{search_type} Name", placeholder="Enter name in Hindi or English...", key="name_input")
     # Translation helper link
     if name_input.strip():
         encoded_name = urllib.parse.quote(name_input)
@@ -156,7 +156,8 @@ with col2:
         "District",
         options=[""] + list(DISTRICTS.keys()),
         format_func=lambda x: "-- Select District --" if x == "" else DISTRICTS[x],
-        index=0
+        index=0,
+        key="district"
     )
 
 with col3:
@@ -166,18 +167,19 @@ with col3:
         options=[""] + list(sro_options.keys()) if sro_options else [""],
         format_func=lambda x: "-- Select SRO --" if x == "" else sro_options.get(x, x),
         index=0,
-        disabled=not district_id
+        disabled=not district_id,
+        key="sro"
     )
 
 with col4:
     year_options = [None] + list(range(2026, 2008, -1))
-    from_year = st.selectbox("From", options=year_options, format_func=lambda x: "-- Year --" if x is None else str(x), index=0)
+    from_year = st.selectbox("From", options=year_options, format_func=lambda x: "-- Year --" if x is None else str(x), index=0, key="from_year")
 
 with col5:
-    to_year = st.selectbox("To", options=year_options, format_func=lambda x: "-- Year --" if x is None else str(x), index=0)
+    to_year = st.selectbox("To", options=year_options, format_func=lambda x: "-- Year --" if x is None else str(x), index=0, key="to_year")
 
 with col6:
-    search_btn = st.button(f"Search {search_type}s", type="primary", use_container_width=True)
+    search_btn = st.button(f"Search {search_type}s", type="primary", use_container_width=True, key="search_btn")
 
 # Row 3: Action buttons
 if st.session_state.scraped_data:
